@@ -8,16 +8,79 @@
 
 import UIKit
 import CoreData
+//import FacebookCore
+//import FacebookLogin
+//import FBSDKCoreKit
+import Firebase
+import FirebaseUI
 
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+
+
+ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    let dataController = DataController(modelName: "MovieCentral")
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        FirebaseApp.configure()
+        //FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
+        dataController.load()
+        //Get topmost viewcontroller to inject dataController to the movieview controller
+//
+        if var topController = window?.rootViewController { while let presentedViewController = topController.presentedViewController  {
+
+            topController = presentedViewController
+
+            }
+ 
+            let tabController = topController as? UITabBarController
+            
+            let navigationController = tabController!.viewControllers?.first as! UINavigationController
+           // let targetViewController = navigationController.viewControllers.first as! NowPlayingViewController
+            //targetViewController.dataController = dataController
+            
+            let firstVC = tabController!.viewControllers?[0] as! UINavigationController
+            let secondVC = tabController!.viewControllers?[1] as! UINavigationController
+            
+            let nowPlayingVC = firstVC.viewControllers.first as! NowPlayingViewController
+            let discoverVC = secondVC.viewControllers.first as! DiscoverViewController
+            let watchlistVC = tabController!.viewControllers?[2] as! WatchListViewController
+            
+            nowPlayingVC.dataController = dataController
+            discoverVC.dataController = dataController
+            watchlistVC.dataController = dataController
+            
+            print("The top view controller i: \(String(describing: tabController!.viewControllers?.first))")
+             print("The top view controller i: \(String(describing: nowPlayingVC))")
+            print("The top view controller i: \(String(describing: discoverVC))")
+            print("The top view controller i: \(String(describing: watchlistVC))")
+            
+
+
+           // let movieViewController = navigationController?.viewControllers.first as! MovieViewController
+            //movieViewController.dataController = dataController
+         
+            
+        }
+        
         return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+//        let handled = FBSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String, annotation: options[UIApplication.OpenURLOptionsKey.annotation])
+//        return handled;
+        
+        let sourceApplication = options[UIApplication.OpenURLOptionsKey.sourceApplication] as! String?
+        
+        if FUIAuth.defaultAuthUI()?.handleOpen(url, sourceApplication:  sourceApplication) ?? false {
+            return true
+        }
+        
+        return false
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

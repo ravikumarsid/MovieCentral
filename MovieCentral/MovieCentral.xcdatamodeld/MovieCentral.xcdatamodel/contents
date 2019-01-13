@@ -1,4 +1,21 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
-    <elements/>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18C54" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Movie" representedClassName="Movie" syncable="YES" codeGenerationType="class">
+        <attribute name="genres" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="movieName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="movieYear" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="overviewText" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="posterImage" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="tmdbMovieID" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="trailerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="watchlist" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Watchlist" inverseName="movies" inverseEntity="Watchlist" syncable="YES"/>
+    </entity>
+    <entity name="Watchlist" representedClassName="Watchlist" syncable="YES" codeGenerationType="class">
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="movies" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Movie" inverseName="watchlist" inverseEntity="Movie" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Movie" positionX="-63" positionY="-18" width="128" height="165"/>
+        <element name="Watchlist" positionX="-372.828125" positionY="-23.234375" width="128" height="73"/>
+    </elements>
 </model>
