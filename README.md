@@ -15,3 +15,19 @@ Tapping on the movie takes to the movie view screen
 4) Watchlist is the screen that shows movies that have been added to the watchlist, they can be deleted by swiping the individual cell.
 
 Before running the app, the API key must be changed in the TMDBConstants file. The TMDB API key can be acquired from  https://www.themoviedb.org/settings/api, by registering for free Account.
+
+Dependencies are to be installed using Cocoapods, include the following dependcies in the podfile in order to run the app. The App relies on TMDB Swift wrapper extensively, so be sure to include TMDBSwift in the pod file.
+
+pod 'Firebase/Auth'
+pod 'Firebase/Core'
+
+pod 'FirebaseUI'
+pod 'FirebaseUI/Auth'
+
+pod 'FirebaseUI/Google'
+pod 'FirebaseUI/Facebook'
+pod 'FirebaseUI/Phone'
+
+pod 'Alamofire', '~> 4.7'
+pod 'SwiftyJSON', '~> 4.0'
+pod "TMDBSwift"

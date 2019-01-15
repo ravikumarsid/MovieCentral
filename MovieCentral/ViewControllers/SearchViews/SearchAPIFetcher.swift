@@ -14,6 +14,7 @@ import TMDBSwift
 enum NetworkError: Error {
     case failure
     case success
+    case networkunavailable
 }
 
 
@@ -27,6 +28,13 @@ class SearchAPIFetcher {
         
         SearchMDB.person(query: searchText, page: 1, includeAdult: true) { (ClientReturn
             , personResults) in
+            
+            if Reachability.isConnectedToNetwork() != true {
+                completionHandler(nil, .networkunavailable)
+                return
+                
+            }
+            
             
             if let personResult = personResults {
                 self.searchResults = personResult

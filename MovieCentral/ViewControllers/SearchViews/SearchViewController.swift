@@ -29,7 +29,7 @@ class SearchViewController: UITableViewController {
         setupTableViewBackgroundView()
         setupSearchBar()
         tableView.isMultipleTouchEnabled = false;
-
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -53,10 +53,10 @@ class SearchViewController: UITableViewController {
             let url: URL = TMDBClient.imageURL(imagePath: profilePath, imageSize: TMDBPosterImageSizes.w342)!
             let imageData = try! Data(contentsOf: url)
             let image = UIImage(data: imageData)
-       
+            
             cell.backgroundColor = UIColor.clear
             cell.searchImage.image = image
-   
+            
         } else {
             cell.backgroundColor = UIColor.clear
             cell.searchImage.image = UIImage(named: "no-image-icon")
@@ -96,6 +96,11 @@ class SearchViewController: UITableViewController {
         backgroundViewLabel.textColor = .darkGray
         backgroundViewLabel.numberOfLines = 0
         //backgroundViewLabel.text = "Oops, /n No results to show! ..."
+        if Reachability.isConnectedToNetwork() != true {
+            DispatchQueue.main.async {
+                self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
+            }
+        }
         tableView.backgroundView = backgroundViewLabel
     }
     
@@ -106,12 +111,14 @@ extension SearchViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         searchResults.removeAll()
         
+        
         guard let textToSearch = searchBar.text, !textToSearch.isEmpty else {
             return
         }
         
         if Date().timeIntervalSince(previousRun) > minInterval {
             previousRun = Date()
+            
             fetchResults(for: textToSearch)
         }
     }
@@ -120,6 +127,12 @@ extension SearchViewController: UISearchBarDelegate {
         print("text serached was: \(text)")
         apiFetcher.search(searchText: text) { (results
             , error) in
+            
+            if case .networkunavailable = error {
+
+                return
+            }
+            
             if case .failure = error {
                 return
             }

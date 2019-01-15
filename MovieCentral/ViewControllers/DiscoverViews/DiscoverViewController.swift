@@ -116,7 +116,10 @@ class DiscoverViewController: UIViewController, DismissManager, UICollectionView
     
     
     @IBAction func getNextPage(_ sender: Any) {
-        
+        if Reachability.isConnectedToNetwork() != true {
+            self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
+            return
+        }
         
         if currentPageNumber <= self.maxTotalPages! {
             print("Current page is : \(currentPageNumber)")
