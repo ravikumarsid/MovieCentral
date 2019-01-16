@@ -70,6 +70,13 @@ class DiscoverViewController: UIViewController, DismissManager, UICollectionView
             return
         }
         
+        TMDBClient.checkTMDBAPIResponseCheck { (isWorking, error) in
+            if (isWorking == false) {
+                self.displayAlert(alertTitle: "Something went wrong with TMDB", alertMesssage: "Check TMDB API settings.")
+                return
+            }
+        }
+        
         if self.movieArr != nil {
             self.movieArr?.removeAll()
             DispatchQueue.main.async {
@@ -119,6 +126,12 @@ class DiscoverViewController: UIViewController, DismissManager, UICollectionView
         if Reachability.isConnectedToNetwork() != true {
             self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
             return
+        }
+        TMDBClient.checkTMDBAPIResponseCheck { (isWorking, error) in
+            if (isWorking == false) {
+                self.displayAlert(alertTitle: "Something went wrong with TMDB", alertMesssage: "Check TMDB API settings.")
+                return
+            }
         }
         
         if currentPageNumber <= self.maxTotalPages! {

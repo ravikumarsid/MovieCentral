@@ -20,6 +20,7 @@ pod 'FirebaseUI/Phone'
 pod 'Alamofire', '~> 4.7'
 pod 'SwiftyJSON', '~> 4.0'
 pod "TMDBSwift"
+pod 'PureLayout'
 
 platform :ios, '11.0'
 

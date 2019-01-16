@@ -31,3 +31,6 @@ pod 'FirebaseUI/Phone'
 pod 'Alamofire', '~> 4.7'
 pod 'SwiftyJSON', '~> 4.0'
 pod "TMDBSwift"
+pod 'PureLayout'
+
+After adding the pod names, from the folder where the pod file is present open terminal and run "pod update" to install all the dependencies. After that open project workspace to run the project.

@@ -73,18 +73,29 @@ class NowPlayingViewController: UIViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        if Reachability.isConnectedToNetwork() != true {
-            self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
-            return
-        }
        
 
         self.performSegue(withIdentifier: "showMovie", sender: self)
     }
     
+    override func shouldPerformSegue(withIdentifier identifier: String, sender: Any?) -> Bool {
+        if Reachability.isConnectedToNetwork() != true {
+            return false
+        }
+        if let movieres = movieRes {
+            return true
+        } else {
+            return false
+        }
+    }
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-
+        
+        if Reachability.isConnectedToNetwork() != true {
+            self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
+            return
+        }
+        
         let destinationVC = segue.destination as! MovieViewController
         let movieIndex = nowPlayingTableView.indexPathForSelectedRow?.row
         destinationVC.tmdbMovie = movieRes![movieIndex!]
@@ -103,18 +114,22 @@ class NowPlayingViewController: UIViewController, UITableViewDelegate, UITableVi
 extension NowPlayingViewController {
     
     func fetchNowPlaying(){
+        
         if Reachability.isConnectedToNetwork() != true {
             self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
             return
         }
         let spinnerView = UIViewController.displaySpinner(onView: self.view)
         TMDBClient.getNowPlayingMovies(pageNumber: 1) { (movieArr, error) in
-            
+            print("The errorntable view: \(String(describing: error))")
             UIViewController.removeSpinner(spinner: spinnerView)
             if let error = error {
-                print(error)
+                print("The error intable view: \(error)")
                 if error.localizedDescription == "The device is not connected to the internet." {
                     self.displayAlert(alertTitle: "Check Internet connection", alertMesssage: "The device is not connected to the internet.")
+                }
+                if error.localizedDescription == "Incorrect API key." {
+                     self.displayAlert(alertTitle: "Something went wrong with TMDB", alertMesssage: "Check TMDB API settings.")
                 }
             } else {
                 self.movieRes = movieArr
@@ -127,6 +142,7 @@ extension NowPlayingViewController {
         }
     
     }
+    
  
 }
 

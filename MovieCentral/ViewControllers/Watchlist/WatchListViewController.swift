@@ -32,11 +32,12 @@ class WatchListViewController: UIViewController, UITableViewDataSource, UITableV
         watchlistTableView.dataSource = self
         watchlistTableView.delegate = self
         setupFetchedResultsController()
-        
+
         // Do any additional setup after loading the view.
         print("fetched results are: \(String(describing: fetchedResultsController.fetchedObjects?.count))")
     }
     
+  
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
         setupFetchedResultsController()
@@ -67,8 +68,10 @@ class WatchListViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if fetchedResultsController.fetchedObjects?.count == 0 {
+            self.watchlistTableView.setEmptyMessage("You don't have any movies in your watchlist yet. All the movies in your watchlist will show up here.")
             return 0
         } else {
+            self.watchlistTableView.restore()
             return (fetchedResultsController.fetchedObjects?.count)!
         }
     }
@@ -98,15 +101,18 @@ class WatchListViewController: UIViewController, UITableViewDataSource, UITableV
             let movieToDelete = fetchedResultsController.object(at: indexPath)
             
             if fetchedResultsController.fetchedObjects?.count == 1 {
-                dataController.viewContext.delete(movieToDelete)
                 self.moviesWatchList?.removeAll()
+                dataController.viewContext.delete(movieToDelete)
                 try? dataController.viewContext.save()
                 self.watchlistTableView.reloadData()
+                self.watchlistTableView.setContentOffset(.zero, animated: true)
                 
             } else {
-                dataController.viewContext.delete(movieToDelete)
                 self.moviesWatchList?.remove(at: indexPath.row)
+                dataController.viewContext.delete(movieToDelete)
                 try? dataController.viewContext.save()
+                self.watchlistTableView.reloadData()
+                self.watchlistTableView.setContentOffset(.zero, animated: true)
             }
         }
     }
@@ -147,5 +153,27 @@ extension WatchListViewController: NSFetchedResultsControllerDelegate {
         default:
             print("...")
         }
+    }
+}
+
+//https://stackoverflow.com/questions/15746745/handling-an-empty-uitableview-print-a-friendly-message
+extension UITableView {
+    
+    func setEmptyMessage(_ message: String) {
+        let messageLabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
+        messageLabel.text = message
+        messageLabel.textColor = .black
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = .center;
+        messageLabel.font = UIFont(name: "TrebuchetMS", size: 15)
+        messageLabel.sizeToFit()
+        
+        self.backgroundView = messageLabel;
+        self.separatorStyle = .none;
+    }
+    
+    func restore() {
+        self.backgroundView = nil
+        self.separatorStyle = .singleLine
     }
 }

@@ -11,6 +11,8 @@
 
 import Foundation
 import TMDBSwift
+import Alamofire
+import SwiftyJSON
 
 class TMDBClient: NSObject {
 
@@ -92,13 +94,18 @@ class TMDBClient: NSObject {
     
     
     static func getNowPlayingMovies(pageNumber: Int, completionHandlerNowPlaying: @escaping (_ nowPlayingArr: [MovieMDB]?, _ error: Error?) -> ()) {
-          TMDBConfig.apikey = TMDBParameterValues.APIKey
+        
+        
+        
+        TMDBConfig.apikey = TMDBParameterValues.APIKey
         
         func sendError(error: String) {
             _ = [NSLocalizedDescriptionKey: error]
              print(error)
             completionHandlerNowPlaying(nil, error as? Error)
         }
+        
+        
 
         
         MovieMDB.nowplaying(page: pageNumber) { (ClientReturn, nowplayingMovieArr) in
@@ -107,6 +114,17 @@ class TMDBClient: NSObject {
                 sendError(error: TMDBError.NoNetworkConnection)
                 return
             }
+            
+            TMDBClient.checkTMDBAPIResponseCheck { (isTMDBWorking, error) in
+                print("IS tmdb working: \(isTMDBWorking)")
+                if (isTMDBWorking == false) {
+                    let userinfo = [NSLocalizedDescriptionKey: "Incorrect API key."]
+                     print("sending error: \(NSError(domain: "completionHandlerNowPlaying", code: 1, userInfo: userinfo))")
+                    completionHandlerNowPlaying(nil, NSError(domain: "completionHandlerNowPlaying", code: 1, userInfo: userinfo))
+                    return
+                }
+            }
+            
             
             guard (ClientReturn.error == nil) else {
                 sendError(error: "There was a error in your request: \(String(describing: ClientReturn.error))")
@@ -124,7 +142,48 @@ class TMDBClient: NSObject {
         }
         
     }
+    
+}
 
+
+extension TMDBClient {
+    
+    static func checkTMDBAPIResponseCheck(completionHandlerTMDBAPICheck: @escaping ( _ isWorking: Bool, _ error: Error?) -> ()) {
+        let tmdbAPIKey = TMDBParameterValues.APIKey
+        let url = URL(string: "https://api.themoviedb.org/3/configuration?api_key=\(tmdbAPIKey)")!
+        
+        Alamofire.request(url).responseJSON { response in
+            
+            func sendError (error: String) {
+                let userinfo = [NSLocalizedDescriptionKey: error]
+                completionHandlerTMDBAPICheck(false, NSError(domain: "completionHandlerTMDBAPICheck", code: 1, userInfo: userinfo))
+            }
+            
+            switch(response.result) {
+            case .success(let son):
+                print(son)
+                if let result = response.result.value as? [String: Any] {
+                    let json_res = result
+                    print(json_res)
+                    
+                    if let status_code = json_res["status_message"] as? String {
+                        print(status_code)
+                        sendError(error: "Incorrect API key.")
+                    }
+                
+                } else {
+                    completionHandlerTMDBAPICheck(true, nil)
+                }
+                
+                
+            case .failure(let error):
+                let message: String
+                message = error.localizedDescription
+                sendError(error: message)
+
+                }
+            }
+        }
     
 }
 
