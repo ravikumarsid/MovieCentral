@@ -58,17 +58,13 @@ class NowPlayingViewController: UIViewController, UITableViewDelegate, UITableVi
                 cell.backgroundColor = UIColor.clear
                 cell.imageView?.center = cell.center
                 cell.imageView?.image = image
-               
             } else {
                 cell.activityIndicator.stopAnimating()
                 cell.backgroundColor = UIColor.clear
                 cell.imageView?.center = cell.center
                 cell.imageView?.image = UIImage(named: "no-image-icon")  
-                
             }
-
         }
-        
         return cell
     }
     
@@ -122,7 +118,6 @@ extension NowPlayingViewController {
                 }
             } else {
                 self.movieRes = movieArr
-                print("Number of movies is : \(String(describing: self.movieRes?.count))")
                 DispatchQueue.main.async {
                     self.nowPlayingTableView.reloadData()
                 }

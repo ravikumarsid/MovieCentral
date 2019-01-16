@@ -24,7 +24,7 @@ struct TMDBParameterKeys {
 }
 
 struct TMDBParameterValues {
-    static let APIKey = "<APIKEY>"
+    static let APIKey = "7fbb44def93e985a9e7fae26792df9ab"
     static let region_US = "US"
 }
 

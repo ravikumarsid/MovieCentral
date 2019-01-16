@@ -61,30 +61,16 @@ class WatchListViewController: UIViewController, UITableViewDataSource, UITableV
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
-//        if fetchedResultsController.fetchedObjects?.count == 0 {
-//            print("No objects in core data")
-//            return 0
-//        } else {
-//            return 1
-//        }
         return 1
     }
     
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if fetchedResultsController.fetchedObjects?.count == 0 {
-            print("No objects in core data")
             return 0
         } else {
             return (fetchedResultsController.fetchedObjects?.count)!
-
         }
-        
-//        if let movieWatchlist = self.moviesWatchList {
-//            return movieWatchlist.count
-//        } else {
-//            return 0
-//        }
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -109,8 +95,6 @@ class WatchListViewController: UIViewController, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if (editingStyle == .delete) {
-           
-            
             let movieToDelete = fetchedResultsController.object(at: indexPath)
             
             if fetchedResultsController.fetchedObjects?.count == 1 {
@@ -118,13 +102,11 @@ class WatchListViewController: UIViewController, UITableViewDataSource, UITableV
                 self.moviesWatchList?.removeAll()
                 try? dataController.viewContext.save()
                 self.watchlistTableView.reloadData()
-
+                
             } else {
                 dataController.viewContext.delete(movieToDelete)
-                 self.moviesWatchList?.remove(at: indexPath.row)
+                self.moviesWatchList?.remove(at: indexPath.row)
                 try? dataController.viewContext.save()
-                watchlistTableView.deleteRows(at: [indexPath], with: .fade)
-                
             }
         }
     }
@@ -157,9 +139,8 @@ extension WatchListViewController: NSFetchedResultsControllerDelegate {
         case .delete:
             if let indexPath = indexPath {
                 if fetchedResultsController.fetchedObjects!.count == 1 {
-                    //watchlistTableView.deleteSections( IndexSet(arrayLiteral: 0), with: .fade)
                 } else {
-                watchlistTableView.deleteRows(at: [indexPath], with: .fade)
+                    watchlistTableView.deleteRows(at: [indexPath], with: .fade)
                 }
             }
             break;
